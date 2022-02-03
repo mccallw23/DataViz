@@ -1,70 +1,20 @@
-# Getting Started with Create React App
+# Visualizing Ivy League Admission Statistics - a DALI MiniSeries Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The goal of this project was to solidify core concepts and skills taught in the DALI introduction to Data Viz series by implementing an open ended project demonstrating something interesting with Data.
 
-## Available Scripts
+It is widely known that America's top colleges are becoming more selective every year, But there are very few sources online that visually demonstrate just how drastic the changes in admission standards have become over the last 2 decades alone.
 
-In the project directory, you can run:
+For this project I implemented a react web app using the d3.js library to create a stacked bar graph showing how the admission rate for the ivy league as a whole has changed from the class of 2006 to the class of 2025. My chart takes advantage of existing color schemes by using the official color of the school to represent it in the graph.
 
-### `npm start`
+Takeaways from the class/project:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. How to use d3.js with React. Specifically: choosing the best method for a specific use case (pie charts begone), How to appropriately label, scale, color, and customize a variety of graphs, and gained a general awareness of extremely powerful dataviz toolkits.
+2. A better sense of good Data viz principals: good contrast, use of dimensionality, accessibility considerations.
+3. Bar charts should start at 0, be ordered by magnitude, have an appropriate scale, and minimize "chart junk"
+4. Getting into the Ivy League is harder now than ever before, and average acceptance rates have more than halved.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Some good next steps:
 
-### `npm test`
+1. I have more ideas for where to take this project. Specifically I think it would be interesting to vizualize how students moving through the admissions process would have fared today versus 20 years ago, or perhaps how the scene changes when considering that some schools receive many more applicants than others.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+2. I am applying both to the Difuse Scholarship Program and the DALI lab where I hope to learn even more about the exciting world of Data Viz/Software and use what I learned in this class to help make Dartmouth projects even more truly awesome.
