@@ -5,7 +5,7 @@ The goal of this project was to solidify core concepts and skills taught in the 
 
 It is widely known that America's top colleges are becoming more selective every year, But there are very few sources online that visually demonstrate just how drastic the changes in admission standards have become over the last 2 decades alone.
 
-For this project I implemented a react web app using the d3.js library to create a stacked bar graph showing how the admission rate for the ivy league as a whole has changed from the class of 2006 to the class of 2025. My chart takes advantage of existing color schemes by using the official color of the school to represent it in the graph.
+For this project I implemented a react web app using the d3.js library to create a stacked bar graph showing how the admission rate for the ivy league as a whole has changed from the class of 2006 to the class of 2025. My chart takes advantage of existing color schemes by using each school's official color to represent it in the graph.
 
 Takeaways from the class/project:
 
