@@ -2,6 +2,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { csv } from 'd3';
+import { useState, useEffect } from 'react';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -12,11 +14,33 @@ const eyeOffsetX = 180;
 const eyeOffsetY = 180;
 const eyeRadius = 80;
 
+
+const csvUrl = "https://raw.githubusercontent.com/mccallw23/DataViz/master/ToiletMap.csv"
+const row = d => {
+  d.Latitude = +d.Latitude;
+  d.Longitude = +d.Longitude;
+  return d;
+};
+
+export const useCities = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    csv(csvUrl, row).then(setData);
+  }, []);
+
+  return data;
+};
+
 const App = () => (
+
+
+
 
 
   //background object tag
   <svg width={width} height={height}>
+
 
     {/* group for other containers*/}
   </svg>

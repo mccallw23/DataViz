@@ -1,158 +1,170 @@
 <!DOCTYPE html>
-
-<script src="https://d3js.org/d3.v4.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-
-<!-- Create an element where the map will take place -->
-<svg id="my_dataviz" width="1200" height="900"></svg>
-<html lang="en">
-  <head>
-
-      <script>
-
-        // The svg
-        var svg = d3.select("svg"),
-          width = +svg.attr("width") ,
-          height = +svg.attr("height");
-
-        // Map and projection
-        var path = d3.geoPath();
-        var projection = d3.geoMercator()
-          .scale(20)
-          .center([0, 20])
-          .translate([width / 2, height / 2]);
-
-        // Data and color scale
-        var data = d3.map();
-        var colorScale = d3.scaleThreshold()
-          .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
-          .range(d3.schemeBlues[7]);
-
-        // Load external data and boot
-        d3.queue()
-          .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-          .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function (d) { data.set(d.code, +d.pop); })
-          .await(ready);
-
-        function ready(error, topo) {
-
-          // Draw the map
-          svg.append("g")
-            .selectAll("path")
-            .data(topo.features)
-            .enter()
-            .append("path")
-            // draw each country
-            .attr("d", d3.geoPath()
-              .projection(projection)
-            )
-            // set the color of each country
-            .attr("fill", function (d) {
-              d.total = data.get(d.id) || 0;
-              return colorScale(d.total);
-            });
-        }
-
-      </script>
-
-
-<!DOCTYPE html>
-<style>
-
-.nation {
-  fill: #ddd;
-}
-
-.states {
-  fill: none;
-  stroke: #fff;
-  stroke-linejoin: round;
-}
-
-.hexagon {
-  stroke: #fff;
-}
+<body style="background-color:grey;">
+<head>
+  <title>D3 Mapping Timeline</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="d3.slider.css" />
 
 </style>
-<svg width="960" height="600"></svg>
+<div id="main">
+  <svg width="1400" height="700"></svg>
+</div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
-<script src="https://d3js.org/topojson.v2.min.js"></script>
-=
 <script>
+  // create the svg
+  var svg = d3.select("svg"),
+    margin = { top: 100, right: 100, bottom: 100, left: 400 },
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// The svg
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+  // set x scale
+  var x = d3.scaleBand()
+    .rangeRound([0, width])
+    .paddingInner(0.05)
+    .align(0.1);
 
-// Map and projection
-var projection = d3.geoMercator()
-    .center([125, -27])                // GPS of location to zoom on
-    .scale(1200)                       // This is like the zoom
-    .translate([ width/2, height/2 ])
+  // set y scale
+  var y = d3.scaleLinear()
+    .rangeRound([height, 0]);
 
-// Load external data and boot
-d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(data){
+  // set the colors
+  var z = d3.scaleOrdinal()
+    .range(["#4E3629", "#003865", "#B31B1B", "#046A38", "#A41034", "#011F5B", "#FF671F", "#00356B"]);
 
-    // Filter data
-    data.features = data.features.filter(function(d){console.log(d.properties.name) ; return d.properties.name=="France"})
+  // load the csv and create the chart
+  // ivy-league-admissions.csv
+  // age-groups.csv
+  d3.csv("ivy-league-admissions.csv", function (d, i, columns) {
+    for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
+    d.total= t;
+    d.total = d.total;
+    return d;
+  }, function (error, data) {
+    if (error) throw error;
 
-    // Draw the map
-    svg.append("g")
-        .selectAll("path")
-        .data(data.features)
-        .enter()
-        .append("path")
-          .attr("fill", "grey")
-          .attr("d", d3.geoPath()
-              .projection(projection)
-          )
-        .style("stroke", "none")
-})
+    var keys = data.columns.slice(1);
 
-//where do you go when you're on the go and you've got to go?
+    data.sort(function (a, b) { return a.Year - b.Year; });
+    x.domain(data.map(function (d) { return d.Year }));
+    y.domain([0, d3.max(data, function (d) { return d.total; })]).nice();
+    z.domain(keys);
+
+    g.append("g")
+      .selectAll("g")
+      .data(d3.stack().keys(keys)(data))
+      .enter().append("g")
+      .attr("fill", function (d) { return z(d.key); })
+      .selectAll("rect")
+      .data(function (d) { return d; })
+      .enter().append("rect")
+      .attr("x", function (d) { return x(d.data.Year); })
+      .attr("y", function (d) { return y(d[1]); })
+      .attr("height", function (d) { return (y(d[0]) - y(d[1])); })
+      .attr("width", x.bandwidth())
+      .on("mouseover", function () { tooltip.style("display", null); })
+      .on("mouseout", function () { tooltip.style("display", "none"); })
+      .on("mousemove", function (d) {
+        console.log(d);
+        var xPosition = d3.mouse(this)[0] +380;
+        var yPosition = d3.mouse(this)[1] +115;
+        tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+        tooltip.select("text").text(d.data.Year + " " + 
+        "Brown".repeat((d.data[" Brown"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Dartmouth".repeat((d.data[" Dartmouth"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Cornell".repeat((d.data[" Cornell"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Penn".repeat((d.data[" Penn"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Columbia".repeat((d.data[" Columbia"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Harvard".repeat((d.data[" Harvard"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Yale".repeat((d.data[" Yale"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+        "Princeton".repeat((d.data[" Princeton"] == Math.round((d[1] - d[0]) * 10) / 10)) +
+         ": " + Math.round((d[1] - d[0]) * 10)/10 + " %" );
+      });
+
+      g.append("text")
+      .attr("x", (width / 2))
+      .attr("y", 0 - (margin.top / 2))
+      .attr("text-anchor", "middle")
+      .style("font-size", "30px")
+      .style("text-decoration", "underline")
+      .text("Ivy League Admission Statistics from the last 2 decades");
+
+      g.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("x", width/2)
+      .attr("y", height +40)
+      .text("Class of year X");
+
+
+      g.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("x", width / 2 +450)
+      .attr("y", height + 60)
+      .text("Admission to the ancient eight has become more than twice as difficult on average when compared against admissions standards 2 decades ago");
+      
+      svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("x", -250)
+      .attr("y", width-550)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Cumulative Admission Rate (Sum of %)");
+
+
+    g.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    g.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(y).ticks(null, "s"))
+      .append("text")
+      .attr("x", 2)
+      .attr("y", y(y.ticks().pop()) + 0.5)
+      .attr("dy", "0.32em")
+      .attr("fill", "#000")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "start");
+
+    var legend = g.append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end")
+      .selectAll("g")
+      .data(keys.slice().reverse())
+      .enter().append("g")
+      .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+      .attr("x", width - 19)
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", z);
+
+    legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .text(function (d) { return d; });
+  });
+
+  // Prep the tooltip bits, initial display is hidden
+  var tooltip = svg.append("g")
+    .attr("class", "tooltip")
+    .style("display", "none");
+
+  tooltip.append("text")
+    .attr("x", 30)
+    .attr("dy", "1.2em")
+    .style("text-anchor", "middle")
+    .attr("font-size", "12px")
+    .attr("font-weight", "bold")
+    .attr("fill", "white");
 
 </script>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
 
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
-</html>
+</body>
