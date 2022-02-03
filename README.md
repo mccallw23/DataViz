@@ -1,4 +1,5 @@
 # Visualizing Ivy League Admission Statistics - a DALI MiniSeries Project
+<img width="1071" alt="Preview" src="https://user-images.githubusercontent.com/62917324/152436091-10df5b77-67a4-4a2b-b82a-eb8062e09520.png">
 
 The goal of this project was to solidify core concepts and skills taught in the DALI introduction to Data Viz series by implementing an open ended project demonstrating something interesting with Data.
 
